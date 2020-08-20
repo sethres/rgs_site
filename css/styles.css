@@ -1,0 +1,279 @@
+html {
+  font-size: 10px;
+}
+@media (max-width: 321px) {
+  html {
+    font-size: 8px;
+  }
+}
+@media (min-width: 576px) {
+  html {
+    font-size: 10px;
+  }
+}
+@media (min-width: 992px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+body {
+  font-family: Montserrat;
+  text-align: center;
+}
+@media (min-width: 992px) {
+  body {
+    text-align: left;
+  }
+}
+
+.widecont {
+  width: 90%;
+  margin: auto;
+}
+
+.fas, .fa {
+  font-size: 0.75rem;
+}
+
+h1, h2, h3, h4, h5, h6, a, p, button {
+  margin: 0;
+}
+
+a {
+  color: #6C757D;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: #652F6C;
+  text-decoration: none;
+  text-shadow: 0 0 0.3px currentColor, 0 0 0.3px currentColor;
+}
+
+.navbar {
+  position: relative;
+}
+.navbar .fas, .navbar .fa, .navbar a {
+  font-size: 1.5rem;
+}
+.navbar .navbar-brand {
+  font-family: Termina;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 2.5rem;
+  color: #652F6C !important;
+}
+.navbar .navbar-toggler,
+.navbar .navbar-toggler:focus {
+  border: none;
+  outline: none;
+}
+@media (min-width: 992px) {
+  .navbar .navbar-nav {
+    float: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+@media (min-width: 992px) {
+  .navbar .navbar-nav .nav-item.first {
+    margin: 0;
+  }
+}
+.navbar .navbar-nav .nav-item {
+  margin: 0.5rem 0;
+}
+@media (min-width: 576px) {
+  .navbar .navbar-nav .nav-item {
+    font-size: 12px;
+  }
+}
+@media (min-width: 992px) {
+  .navbar .navbar-nav .nav-item {
+    margin: 0 0 0 1rem;
+  }
+}
+.navbar .navbar-nav .nav-item i {
+  width: 0%;
+  text-align: left;
+}
+.navbar .navbar-nav .nav-item .nav-link-text {
+  margin-left: 2.5rem;
+}
+@media (min-width: 0px) {
+  .navbar .navbar-nav .nav-item .nav-link-text {
+    display: inline-block;
+  }
+}
+@media (min-width: 992px) {
+  .navbar .navbar-nav .nav-item .nav-link-text {
+    display: none;
+  }
+}
+.navbar .navbar-nav .nav-item#currentpage {
+  text-shadow: 0 0 0.3px currentColor, 0 0 0.3px currentColor;
+}
+
+.tooltip {
+  display: none;
+}
+@media (min-width: 992px) {
+  .tooltip {
+    display: inline;
+  }
+}
+
+.heading {
+  height: 50vh;
+  background: url("../images/company2.jpg");
+  background-size: cover;
+  background-position: center;
+}
+@media (min-width: 992px) {
+  .heading {
+    height: 80vh;
+  }
+}
+.heading .jumbotxt {
+  z-index: 2;
+}
+.heading .jumbotxt h1 {
+  line-height: 1;
+}
+.heading .jumbotxt p {
+  margin: 2rem 0;
+}
+.heading .jumbotxt div {
+  margin: auto;
+}
+@media (min-width: 992px) {
+  .heading .jumbotxt div {
+    margin: auto 0;
+  }
+}
+
+.procarousel {
+  height: 50vh;
+}
+@media (min-width: 992px) {
+  .procarousel {
+    height: 80vh;
+  }
+}
+.procarousel h2 {
+  padding: 1rem 0 0 0;
+}
+@media (min-width: 992px) {
+  .procarousel h2 {
+    padding: 0;
+  }
+}
+.procarousel p {
+  margin: 0.5rem 0;
+}
+.procarousel .prodslideimg {
+  height: 80%;
+  background-image: url(https://via.placeholder.com/1000/e9ecef/212529?text=Placeholder+Image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+}
+.procarousel .carousel-indicators li {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 1;
+  width: 15%;
+  height: 100%;
+  background-color: #6c757d;
+  transition: 0.4s ease;
+}
+.procarousel .carousel-indicators li:hover {
+  background-color: #7700cc;
+}
+.procarousel .carousel-indicators .active {
+  background-color: #652f6c;
+}
+
+.information p {
+  margin: 0.5rem 0;
+}
+.information .infoimg {
+  height: 50vh;
+  background-image: url(https://via.placeholder.com/2000/ffffff/212529?text=Placeholder+Image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+@media (min-width: 992px) {
+  .information .infoimg {
+    height: 100vh;
+  }
+}
+
+.productlayout .curPage {
+  color: #652F6C;
+  font-weight: bold;
+  text-shadow: 0 0 0.3px currentColor, 0 0 0.3px currentColor;
+}
+.productlayout button {
+  margin-bottom: 1rem;
+}
+@media (min-width: 992px) {
+  .productlayout button {
+    margin-bottom: 0;
+  }
+}
+.productlayout hr {
+  display: none;
+}
+@media (min-width: 992px) {
+  .productlayout hr {
+    display: block;
+  }
+}
+
+.pro-info .detcarousel .carousel-item img {
+  height: 35rem;
+  object-fit: contain;
+}
+@media (min-width: 992px) {
+  .pro-info .detcarousel .carousel-item img {
+    height: 50rem;
+  }
+}
+.pro-info .detcarousel .controller i {
+  color: #C4CCD4;
+  font-size: 2rem;
+}
+.pro-info .detcarousel .carousel-indicators {
+  position: static;
+  left: initial;
+  width: initial;
+  margin-left: initial;
+}
+.pro-info .detcarousel .carousel-indicators > li {
+  width: initial;
+  height: initial;
+  text-indent: initial;
+}
+.pro-info .detcarousel .carousel-indicators > li img {
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+}
+
+.more-pro-info .btn-link {
+  color: #6C757D;
+  text-decoration: none;
+}
+.more-pro-info .btn-link:hover {
+  color: #652F6C;
+  text-shadow: 0 0 0.3px currentColor, 0 0 0.3px currentColor;
+}
+
+/*# sourceMappingURL=styles.css.map */
