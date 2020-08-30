@@ -1,0 +1,45 @@
+FROM php:7.4-apache
+
+RUN ln -snf /usr/share/zoneinfo/America/New_York /etc/localtime && echo America/New_York > /etc/timezone
+
+#install necessary packages for php/react
+#RUN apt-get update && apt-get install -y --no-install-recommends \
+    #zlib1g-dev \
+    #libpng-dev \
+    #libzip-dev \
+    #unzip \
+    #nodejs \
+    #npm
+RUN docker-php-ext-install mysqli pdo_mysql #zip gd
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# Apache and PHP config
+COPY ./docker_config/site.conf /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
+RUN a2enmod headers
+
+#install, run, and remove composer
+#RUN php -r "copy('https://getcomposer.org/installer', '/var/www/composer-setup.php');"
+#RUN php -r "if (hash_file('sha384', '/var/www/composer-setup.php') === 'a5c698ffe4b8e849a443b120cd5ba38043260d5c4023dbf93e1558871f1f07f58274fc6f4c93bcfd858c6bd0775cd8d1') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+#RUN php /var/www/composer-setup.php --install-dir=/var/www
+#COPY ./api/composer.* /var/www/
+#RUN php /var/www/composer.phar install --working-dir=/var/www
+
+#Set up React app
+#RUN mkdir /var/www/html/scripts
+#WORKDIR /var/www/react-app
+#COPY ./react-app/package* ./
+#RUN npm install npm@6.14.1 -g && npm install
+#COPY ./react-app/src /var/www/react-app/src
+#COPY ./api/public/img /var/www/html/img
+
+#Set up PHP API
+#COPY ./api/app /var/www/app
+#COPY ./api/public/index.php /var/www/html/index.php
+#COPY ./api/src /var/www/src
+#COPY ./api/templates /var/www/templates
+
+EXPOSE 80
+
+CMD apache2-foreground 
+# & npm start
