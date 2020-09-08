@@ -140,7 +140,7 @@
                     </div>
                     <div class="card-body">
                       <h6 class="card-title mb-2" style="font-size: .9375rem; font-weight: 600;"><?php echo $row['Name'] ?></h6>
-                      <a class="stretched-link" style="font-size: .75rem" href="details.php?skuvar=<?php echo $row['Prefix']?>">View Product <i class="fa fa-angle-double-right"></i></a>
+                      <a class="stretched-link" style="font-size: .75rem" href="details.php?skuvar=<?php echo $row['Prefix']?>&color=<?php echo $row['Color']?>">View Product <i class="fa fa-angle-double-right"></i></a>
                     </div>
                   </div>
                 </div>

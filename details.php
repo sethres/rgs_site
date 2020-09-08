@@ -9,6 +9,7 @@
 <head>
   <?php
   $skuvar = $_GET['skuvar'];
+  $skucolor = $_GET['color'];
   $pgTitle = "Products: ".$skuvar;
   $pgDesc = "Browse the RGS Product Database";
   include "includes/meta.php";
@@ -17,7 +18,7 @@
 
 <?php
 // GET PRODUCT & IMAGES //
-$getprod="SELECT * FROM regency_products WHERE Prefix='$skuvar'";
+$getprod="SELECT * FROM regency_products WHERE Prefix='$skuvar' AND Color='$skucolor'";
 $getcol= "SHOW COLUMNS FROM regency_products";
 $resultprod = $conn->query($getprod);
 $resultcol = $conn->query($getcol);
@@ -158,7 +159,7 @@ $images = glob($dirname."*.jpg");
               $n = 0; // RESET $n
               while($prod = $resultcolor->fetch_assoc()){
                 ?>
-                <button type="button" class="btn btn-outline-secondary shadow-none py-3 px-4 m-1 <?php if ($n == 0) echo "active"?>" style="font-size: .85rem"><?php echo $prod['Color']?></button>
+                <a href="details.php?skuvar=<? echo $skuvar?>&color=<? echo $prod['Color']?>" class="btn btn-outline-secondary shadow-none py-3 px-4 m-1 <?php if ($skucolor == $prod['Color']) echo "active"?>" style="font-size: .85rem"><?php echo $prod['Color']?></a>
                 <?php
                 $n++;
                 }
@@ -181,9 +182,10 @@ $images = glob($dirname."*.jpg");
               <hr class="p-0 ml-0">
               <div div style="font-size: 0">
                 <?php
+                $n=0;
                 while($prod = $resultconf->fetch_assoc()){
                   ?>
-                  <button type="button" class="btn btn-outline-secondary shadow-none py-3 px-4 m-1 <?php if ($n == 0) echo "active"?>" style="font-size: .85rem"><?php echo $prod['Configuration'] ?></button>
+                  <a href="" class="btn btn-outline-secondary shadow-none py-3 px-4 m-1 <?php if ($n == 0) echo "active"?>" style="font-size: .85rem"><?php echo $prod['Configuration'] ?></a>
                 <?php
                 $n++;
                 }
