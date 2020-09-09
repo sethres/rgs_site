@@ -24,4 +24,8 @@ class ProductController extends APIController
     function SubCollections (Request $request, Response $response, array $args) {
         $this->AddReturnData($this->Model->SubCollections($args['categoryURL'], $args['collectionURL']));
     }
+
+    function Products (Request $request, Response $response, array $args) {
+        $this->AddReturnData($this->Model->Products($args['categoryURL'], $args['collectionURL'], $args['subcollectionURL']));
+    }
 }

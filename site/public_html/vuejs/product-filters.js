@@ -39,6 +39,11 @@ let app = Vue.component('ProductFilters', {
       this.collection = this.$route.params.collectionURL;
       this.getFilter('SubCollections', this.category, this.collection);
     }
+
+    if (this.$route.params.subcollectionURL) {
+      this.subcollection = this.$route.params.subcollectionURL;
+      this.getProducts();
+    }
   },
 
   methods: {
@@ -62,6 +67,20 @@ let app = Vue.component('ProductFilters', {
                       break;
               }
             }
+            if (typeof data.Products !== 'undefined') {
+              this.products = data.Products
+            }
+          }
+        }
+      }, this)
+    },
+
+    getProducts () {
+      let url = 'Products/' + this.category + '/' + this.collection + '/' + this.subcollection;
+      API.get(url, {
+        rollbarMessage: 'Error getting products',
+        success: data => {
+          if (typeof data !== 'undefined') {
             if (typeof data.Products !== 'undefined') {
               this.products = data.Products
             }
@@ -94,7 +113,16 @@ let app = Vue.component('ProductFilters', {
     },
 
     handleSubCollectionClick (filter) {
-
+      this.subcollection = filter;
+      this.getProducts();
+      this.$router.push({
+        name: 'ProductResults',
+        params: {
+          categoryURL: this.category,
+          collectionURL: this.collection,
+          subcollectionURL: this.subcollection
+        }
+      });
     }
   }
 })

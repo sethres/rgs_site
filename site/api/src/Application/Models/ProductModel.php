@@ -77,6 +77,9 @@ class ProductModel extends APIModel {
     private function GetProducts ($start_from = 0, $category = null, $collection = null, $subcollection = null) {
         $sql = "SELECT Prefix, Name, SKU 
                 FROM regency_products 
+                ".($category !== null ? " WHERE Category = :Category" : "").
+                ($collection !== null ? " AND `Collection` = :Collection " : "").
+                ($subcollection !== null ? " AND Sub_Collection = :SubCollection " : "")."
                 GROUP BY Prefix 
                 ORDER BY Prefix, Name ASC 
                 LIMIT $start_from, ".$this->RowsPerPage;
@@ -89,6 +92,10 @@ class ProductModel extends APIModel {
 
         if ($collection !== null) {
             $statement->bindValue(":Collection", $collection);
+        }
+
+        if ($subcollection !== null) {
+            $statement->bindValue(":SubCollection", $subcollection);
         }
 
         try {
@@ -130,7 +137,7 @@ class ProductModel extends APIModel {
                 FROM regency_products 
                 ORDER BY Category";
 
-        return ['Filter' => $this->GetCategoryCollection($sql), 'Products' => $this->GetProducts()];
+        return ['Filter' => $this->GetCategoryCollection($sql), 'Products' => $this->GetProducts() ];
     }
 
     public function Collections ($categoryURL) {
@@ -140,7 +147,7 @@ class ProductModel extends APIModel {
                                      ORDER BY Collection";
 
         $category = $this->GetTextFromURL($categoryURL);
-        return ['Filter' => $this->GetCategoryCollection($sql, $category), 'Products' => $this->GetProducts(0, $category)];
+        return ['Filter' => $this->GetCategoryCollection($sql, $category), 'Products' => $this->GetProducts(0, $category) ];
     }
 
     public function SubCollections ($categoryURL, $collectionURL) {
@@ -151,6 +158,14 @@ class ProductModel extends APIModel {
 
         $category = $this->GetTextFromURL($categoryURL);
         $collection = $this->GetTextFromURL($collectionURL);
-        return ['Filter' => $this->GetCategoryCollection($sql, $category, $collection), 'Products' => $this->GetProducts(0, $category, $collection)];
+        return ['Filter' => $this->GetCategoryCollection($sql, $category, $collection), 'Products' => $this->GetProducts(0, $category, $collection) ];
+    }
+
+    public function Products ($categoryURL, $collectionURL, $subcollectionURL) {
+        $category = $this->GetTextFromURL($categoryURL);
+        $collection = $this->GetTextFromURL($collectionURL);
+        $subcollection = $this->GetTextFromURL($subcollectionURL);
+
+        return [ 'Products' => $this->GetProducts(0, $category, $collection, $subcollection) ];
     }
 }
