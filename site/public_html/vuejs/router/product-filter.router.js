@@ -9,13 +9,13 @@ const router = new Router({
   base: '/products',
   routes: [
     {
-      path: '*',
+      path: '/:categoryURL([A-Za-z0-9\-]+)?/:collectionURL([A-Za-z0-9\-]+)?',
       name: 'ProductResults',
       component: productResults
     },
     {
       path: '/index.php', redirect: { name: 'ProductResults' }
-    },
+    }
     /*
     { // may want to improve 404 handling in the future but works for now, just not the best for internal links.
       path: '*',

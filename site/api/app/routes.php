@@ -18,9 +18,9 @@ return function (App $app) {
 
         $group->get('/Categories', 'ProductController')->setName('Categories');
 
-        $group->get('/Collections', 'ProductController')->setName('Collections');
+        $group->get('/Collections/{categoryURL:[A-Za-z0-9\-]+}', 'ProductController')->setName('Collections');
 
-        $group->get('/SubCollections', 'ProductController')->setName('SubCollections');
+        $group->get('/SubCollections/{categoryURL:[A-Za-z0-9\-]+}/{collectionURL:[A-Za-z0-9\-]+}', 'ProductController')->setName('SubCollections');
     });
 
     $app->options('/{routes:.+}', function ($request, $response, $args) {

@@ -24,27 +24,45 @@ let app = Vue.component('ProductFilters', {
     collection: '',
     initialized: false,
     products: [],
-    subcollections: []
+    subcollections: [],
+    subcollection: ''
   }),
 
   created () {
     this.getFilter('Categories');
+    if (this.$route.params.categoryURL) {
+      this.category = this.$route.params.categoryURL;
+      this.getFilter('Collections', this.category);
+    }
+
+    if (this.$route.params.collectionURL) {
+      this.collection = this.$route.params.collectionURL;
+      this.getFilter('SubCollections', this.category, this.collection);
+    }
   },
 
   methods: {
-    getFilter (filterType, data) {
-      API.get(filterType, {
-        data: data,
+    getFilter (filterType, category, collection) {
+      let url = filterType + (typeof category !== 'undefined' ? '/' + category : '') + (typeof collection !== 'undefined' ? '/' + collection : '');
+      API.get(url, {
         rollbarMessage: 'Error getting ' + filterType,
         success: data => {
-          if (typeof data !== undefined) {
+          if (typeof data !== 'undefined') {
             this.initialized = true;
-            if (typeof data.Filter !== undefined) {
-              if (filterType === 'Categories') {
-                this.categories = data.Filter;
+            if (typeof data.Filter !== 'undefined') {
+              switch (filterType) {
+                case 'Categories':
+                  this.categories = data.Filter;
+                  break;
+                  case 'Collections':
+                    this.collections = data.Filter;
+                    break;
+                    case 'SubCollections':
+                      this.subcollections = data.Filter;
+                      break;
               }
             }
-            if (typeof data.Products !== undefined) {
+            if (typeof data.Products !== 'undefined') {
               this.products = data.Products
             }
           }
@@ -54,13 +72,25 @@ let app = Vue.component('ProductFilters', {
 
     handleCategoryClick (filter) {
       this.category = filter;
-      this.getFilter('Collections', {
-        'categoryURL': this.category
-      })
+      this.getFilter('Collections', this.category);
+      this.$router.push({
+        name: 'ProductResults',
+        params: {
+          categoryURL: this.category
+        }
+      });
     },
 
     handleCollectionClick (filter) {
-
+      this.collection = filter;
+      this.getFilter('SubCollections', this.category, this.collection);
+      this.$router.push({
+        name: 'ProductResults',
+        params: {
+          categoryURL: this.category,
+          collectionURL: this.collection
+        }
+      });
     },
 
     handleSubCollectionClick (filter) {

@@ -46,16 +46,14 @@ class ProductModel extends APIModel {
         return $text;
     }
 
-    private function GetCategoryCollection ($sql, $categoryURL = null, $collectionURL = null) {
+    private function GetCategoryCollection ($sql, $category = null, $collection = null) {
         $statement = $this->prepSQL($sql);
 
-        if ($categoryURL !== null) {
-            $category = $this->GetTextFromURL($categoryURL);
+        if ($category !== null) {
             $statement->bindValue(":Category", $category);
         }
 
-        if ($collectionURL !== null) {
-            $collection = $this->GetTextFromURL($collectionURL);
+        if ($collection !== null) {
             $statement->bindValue(":Collection", $collection);
         }
 
@@ -141,7 +139,8 @@ class ProductModel extends APIModel {
                                      WHERE Category = :Category
                                      ORDER BY Collection";
 
-        return $this->GetCategoryCollection($sql, $categoryURL);
+        $category = $this->GetTextFromURL($categoryURL);
+        return ['Filter' => $this->GetCategoryCollection($sql, $category), 'Products' => $this->GetProducts(0, $category)];
     }
 
     public function SubCollections ($categoryURL, $collectionURL) {
@@ -150,6 +149,8 @@ class ProductModel extends APIModel {
                                      WHERE Category = :Category AND Collection = :Collection
                                      ORDER BY Sub_Collection";
 
-        return $this->GetCategoryCollection($sql, $categoryURL, $collectionURL);
+        $category = $this->GetTextFromURL($categoryURL);
+        $collection = $this->GetTextFromURL($collectionURL);
+        return ['Filter' => $this->GetCategoryCollection($sql, $category, $collection), 'Products' => $this->GetProducts(0, $category, $collection)];
     }
 }
