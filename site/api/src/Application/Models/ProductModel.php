@@ -7,6 +7,7 @@ use PDO;
 
 class ProductModel extends APIModel {
     private $RowsPerPage = 16;
+    private $ImagePath = '/images/products/';
 
     public function __construct(ContainerInterface $container, Logger $logger, PDO $db) {
     	parent::__construct($container, $logger, $db);
@@ -36,6 +37,16 @@ class ProductModel extends APIModel {
         }
 
         return $statement->fetchAll();
+    }
+
+    private function GetImage ($sku) {
+        if (file_exists($_SERVER['DOCUMENT_ROOT'].$this->ImagePath.$sku.'_1.jpg')) {
+            return $this->ImagePath.$sku.'_1.jpg';
+        } elseif ($_SERVER['DOCUMENT_ROOT'].file_exists($this->ImagePath.$sku.'.jpg')) {
+            return $this->ImagePath.$sku.'.jpg';
+        }
+
+        return 'https://via.placeholder.com/3000/ffffff/212529?text=IMG+Coming+Soon';
     }
 
     private function GetProducts ($start_from = 0, $category = null, $collection = null, $subcollection = null) {
@@ -74,26 +85,12 @@ class ProductModel extends APIModel {
             return ["error" => $statement->errorInfo()];
         }
 
-        /*
-        if (file_exists('images/products/'.$row['SKU'].'_1.jpg')) {
-                            ?>
-                            <img src="images/products/<?php echo $row['SKU']?>_1.jpg" style="object-fit: contain; padding: 1rem; height: 20rem; width: 100%" class="img-responsive" alt="<?php echo $row['Prefix']?>.jpg">
-                            <?php
-                        }
+        $products = $statement->fetchAll();
+        foreach ($products as $k => $product) {
+            $products[$k]['Image'] = $this->GetImage($product['SKU']);
+        }
 
-                        elseif (file_exists('images/products/'.$row['SKU'].'.jpg')){
-                            ?>
-                            <img src="images/products/<?php echo $row['SKU']?>.jpg" style="object-fit: contain; padding: 1rem; height: 20rem; width: 100%" class="img-responsive" alt="<?php echo $row['Prefix']?>.jpg">
-                            <?php
-                        }
-
-                        else{
-                            ?>
-                            <img src="https://via.placeholder.com/3000/ffffff/212529?text=IMG+Coming+Soon" style="object-fit: contain; padding: 1rem; height: 20rem; width: 100%" class="img-responsive" alt="<?php echo $row['Prefix']?>.jpg">
-                            <?php
-                        }*/
-
-        return $statement->fetchAll();
+        return $products;
     }
 
     public function Categories ($getProducts = true) {

@@ -9,7 +9,7 @@ let productResults = Vue.component('ProductResults', {
                     <div class="col-12 col-md-3 p-3 text-center" v-for="product in products" :key="product.SKU">
                       <div class="card h-100">
                           <div style="" class="card-img-top img-fluid">
-                            <img src="https://via.placeholder.com/3000/ffffff/212529?text=IMG+Coming+Soon" style="object-fit: contain; padding: 1rem; height: 20rem; width: 100%" class="img-responsive" alt="<?php echo $row['Prefix']?>.jpg">
+                            <img :src="product.Image" style="object-fit: contain; padding: 1rem; height: 20rem; width: 100%" class="img-responsive" :alt="product.Image.replace('/images/products/', '')">
                           </div>
                           <div class="card-body">
                           <h6 class="card-title mb-2" style="font-size: .9375rem; font-weight: 600;">{{ product.Name }}</h6>
