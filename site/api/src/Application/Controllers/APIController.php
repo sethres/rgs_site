@@ -10,6 +10,7 @@ use PDO;
 abstract class APIController {
     protected $Model; // Model for DB actions and logging
     protected $Args; // Args
+    protected $Query; // Querystring
     private $SentData; // Data sent in the request
     private $Request; // Request object
     private $Response; // Response object
@@ -77,6 +78,7 @@ abstract class APIController {
         $this->Request = $request;
         $this->Response = $response;        
         $this->Args = $args;
+        $this->Query = $this->Request->getQueryParams();
     }
 
     protected function CustomResponse (Response $response) {
