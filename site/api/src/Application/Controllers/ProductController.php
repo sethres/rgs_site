@@ -18,11 +18,11 @@ class ProductController extends APIController
     }
 
     function Collections (Request $request, Response $response, array $args) {
-        $this->AddReturnData($this->Model->Collections($this->Query['cat'], $this->Query['prod']));
+        $this->AddReturnData($this->Model->Collections($this->Query['cat'], $this->Query['prod'] === 'true' ? true : false));
     }
 
     function SubCollections (Request $request, Response $response, array $args) {
-        $this->AddReturnData($this->Model->SubCollections($this->Query['cat'], $this->Query['col'], $this->Query['prod']));
+        $this->AddReturnData($this->Model->SubCollections($this->Query['cat'], $this->Query['col'], $this->Query['prod'] === 'true' ? true : false));
     }
 
     function Products (Request $request, Response $response, array $args) {
