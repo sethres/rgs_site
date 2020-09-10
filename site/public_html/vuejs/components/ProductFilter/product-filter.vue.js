@@ -9,23 +9,23 @@ let productFilter = Vue.component('ProductFilter', {
               <div :id="'collapse' + this.type" class="collapse">
                 <ul class="list-unstyled">
                   <li v-for="item in items" class="mb-1" :key="item.URL">
-                    <a href="#" :id="item.Value" style="font-size: .85rem;" v-on:click="clicked(item.Value, $event)">{{ item.Value }}</a>
+                    <a href="#" style="font-size: .85rem;" :id="item.Value" v-on:click="clicked(item.Value, $event)">{{ item.Value }}</a>
                   </li>
                 </ul>
               </div>
             </div>`,
 
-            props: {
-              type: { type: String, default: 'Category' },
-              items: { type: Array, default: () => [] }
-            },
+  props: {
+    type: { type: String, default: 'Category' },
+    items: { type: Array, default: () => [] }
+  },
 
-            methods: {
-              clicked (filter, e) {
-                e.preventDefault();
-                this.$emit('clicked', filter);
-              }
-            }
+  methods: {
+    clicked (filter, e) {
+      e.preventDefault();
+      this.$emit('clicked', filter);
+    }
+  }
 });
 
 export default productFilter;
