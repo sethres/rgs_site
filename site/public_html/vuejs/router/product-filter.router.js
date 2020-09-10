@@ -9,7 +9,7 @@ const router = new Router({
   base: '/products',
   routes: [
     {
-      path: '/:categoryURL([A-Za-z0-9\-]+)?/:collectionURL([A-Za-z0-9\-]+)?/:subcollectionURL([A-Za-z0-9\-]+)?',
+      path: '/',
       name: 'ProductResults',
       component: productResults
     },
@@ -28,8 +28,6 @@ const router = new Router({
         selector: to.hash
         // , offset: { x: 0, y: 10 }
       }
-    } else {
-      return { x: 0, y: 0 }
     }
   }
 });

@@ -25,30 +25,34 @@ let app = Vue.component('ProductFilters', {
     initialized: false,
     products: [],
     subcollections: [],
-    subcollection: ''
+    subcollection: '',
   }),
 
   created () {
-    this.getFilter('Categories');
-    if (this.$route.params.categoryURL) {
-      this.category = this.$route.params.categoryURL;
-      this.getFilter('Collections', this.category);
-    }
+    if (this.$route.query.cat) {
+      this.category = this.$route.query.cat;
 
-    if (this.$route.params.collectionURL) {
-      this.collection = this.$route.params.collectionURL;
-      this.getFilter('SubCollections', this.category, this.collection);
-    }
+      if (this.$route.query.col) {
+        this.collection = this.$route.query.col;
 
-    if (this.$route.params.subcollectionURL) {
-      this.subcollection = this.$route.params.subcollectionURL;
-      this.getProducts();
+        if (this.$route.query.sub) {
+          this.subcollection = this.$route.query.sub;
+          this.getProducts();
+        }
+        this.getFilter('SubCollections', this.category, this.collection, (this.subcollection === '' ? true : false));
+      }
+      this.getFilter('Collections', this.category, '', (this.collection === '' ? true : false));
     }
+    this.getFilter('Categories', '', '', (this.category === '' ? true : false));
   },
 
   methods: {
-    getFilter (filterType, category, collection) {
-      let url = filterType + (typeof category !== 'undefined' ? '/' + category : '') + (typeof collection !== 'undefined' ? '/' + collection : '');
+    getFilter (filterType, category, collection, getProducts) {
+      if (typeof getProducts === 'undefined') {
+        getProducts = true;
+      }
+      let url = filterType + (typeof category !== 'undefined' && category !== '' ? '?cat=' + encodeURIComponent(category) : '?') + 
+        (typeof collection !== 'undefined' && collection !== '' ? '&col=' + encodeURIComponent(collection) : '') + '&prod=' + getProducts;
       API.get(url, {
         rollbarMessage: 'Error getting ' + filterType,
         success: data => {
@@ -59,12 +63,12 @@ let app = Vue.component('ProductFilters', {
                 case 'Categories':
                   this.categories = data.Filter;
                   break;
-                  case 'Collections':
-                    this.collections = data.Filter;
-                    break;
-                    case 'SubCollections':
-                      this.subcollections = data.Filter;
-                      break;
+                case 'Collections':
+                  this.collections = data.Filter;
+                  break;
+                case 'SubCollections':
+                  this.subcollections = data.Filter;
+                  break;
               }
             }
             if (typeof data.Products !== 'undefined') {
@@ -76,7 +80,7 @@ let app = Vue.component('ProductFilters', {
     },
 
     getProducts () {
-      let url = 'Products/' + this.category + '/' + this.collection + '/' + this.subcollection;
+      let url = 'Products?cat=' + encodeURIComponent(this.category) + '&col=' + encodeURIComponent(this.collection) + '&sub=' + encodeURIComponent(this.subcollection);
       API.get(url, {
         rollbarMessage: 'Error getting products',
         success: data => {
@@ -91,23 +95,29 @@ let app = Vue.component('ProductFilters', {
 
     handleCategoryClick (filter) {
       this.category = filter;
+      this.collections = [];
+      this.collection = '';
+      this.subcollections = [];
+      this.subcollection = '';
       this.getFilter('Collections', this.category);
       this.$router.push({
         name: 'ProductResults',
-        params: {
-          categoryURL: this.category
+        query: {
+          cat: this.category
         }
       });
     },
 
     handleCollectionClick (filter) {
       this.collection = filter;
+      this.subcollections = [];
+      this.subcollection = '';
       this.getFilter('SubCollections', this.category, this.collection);
       this.$router.push({
         name: 'ProductResults',
-        params: {
-          categoryURL: this.category,
-          collectionURL: this.collection
+        query: {
+          cat: this.category,
+          col: this.collection
         }
       });
     },
@@ -117,10 +127,10 @@ let app = Vue.component('ProductFilters', {
       this.getProducts();
       this.$router.push({
         name: 'ProductResults',
-        params: {
-          categoryURL: this.category,
-          collectionURL: this.collection,
-          subcollectionURL: this.subcollection
+        query: {
+          cat: this.category,
+          col: this.collection,
+          sub: this.subcollection
         }
       });
     }

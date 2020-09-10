@@ -9,7 +9,7 @@ let productFilter = Vue.component('ProductFilter', {
               <div :id="'collapse' + this.type" class="collapse">
                 <ul class="list-unstyled">
                   <li v-for="item in items" class="mb-1" :key="item.URL">
-                    <a href="#" :id="item.URL" style="font-size: .85rem;" v-on:click="clicked(item.URL, $event)">{{ item.Value }}</a>
+                    <a href="#" :id="item.Value" style="font-size: .85rem;" v-on:click="clicked(item.Value, $event)">{{ item.Value }}</a>
                   </li>
                 </ul>
               </div>

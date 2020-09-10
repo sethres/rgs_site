@@ -12,40 +12,6 @@ class ProductModel extends APIModel {
     	parent::__construct($container, $logger, $db);
     }
 
-    /**
-     * Filters out non-alpha characters to create a URL
-     */
-    private function GetURL ($text) {
-        $text = \preg_replace("/[^A-Za-z0-9& ]/", '', $text);
-        $text = \str_replace(['&', ' '], ['and', '-'], $text);
-        $text = \strtolower($text);
-
-        return $text;
-    }
-
-    /**
-     * Accepts an array of strings and creates a key/value pair of URL/string
-     */
-    private function GetURLs ($data) {
-        $return = [];
-
-        foreach ($data as $key=>$value) {
-            $return[$key]['URL'] = $this->GetURL($value['Value']);
-            $return[$key]['Value'] = $value['Value'];
-        }
-
-        return $return;
-    }
-
-    /**
-     * Takes a URL and converts it to text, reverse of what GetURL does, to use for queries
-     */
-    private function GetTextFromURL ($text) {
-        $text = \str_replace(['and', '-'], ['&', ' '], $text);
-
-        return $text;
-    }
-
     private function GetCategoryCollection ($sql, $category = null, $collection = null) {
         $statement = $this->prepSQL($sql);
 
@@ -69,9 +35,7 @@ class ProductModel extends APIModel {
             return ["error" => $statement->errorInfo()];
         }
 
-        $results = $statement->fetchAll();
-
-        return $this->GetURLs($results);
+        return $statement->fetchAll();
     }
 
     private function GetProducts ($start_from = 0, $category = null, $collection = null, $subcollection = null) {
@@ -132,40 +96,59 @@ class ProductModel extends APIModel {
         return $statement->fetchAll();
     }
 
-    public function Categories () {
+    public function Categories ($getProducts = true) {
         $sql = "SELECT DISTINCT Category AS Value
-                FROM regency_products 
+                FROM regency_products
+                WHERE Category != ''
                 ORDER BY Category";
 
-        return ['Filter' => $this->GetCategoryCollection($sql), 'Products' => $this->GetProducts() ];
+        $return = [
+            'Filter' => $this->GetCategoryCollection($sql)
+        ];
+
+        if ($getProducts) {
+            $return['Products'] = $this->GetProducts();
+        }
+
+        return $return;
     }
 
-    public function Collections ($categoryURL) {
-        $sql = "SELECT DISTINCT Collection AS Value
-                                     FROM regency_products
-                                     WHERE Category = :Category
-                                     ORDER BY Collection";
+    public function Collections ($category, $getProducts = true) {
+        $sql = "SELECT DISTINCT `Collection` AS Value
+                FROM regency_products
+                WHERE Category = :Category AND `Collection` != ''
+                ORDER BY `Collection`";
+        
+        $return = [
+            'Filter' => $this->GetCategoryCollection($sql, $category)
+        ];
 
-        $category = $this->GetTextFromURL($categoryURL);
-        return ['Filter' => $this->GetCategoryCollection($sql, $category), 'Products' => $this->GetProducts(0, $category) ];
+        if ($getProducts) {
+            $return['Products'] = $this->GetProducts(0, $category);
+        }
+
+        return $return;
     }
 
-    public function SubCollections ($categoryURL, $collectionURL) {
+    public function SubCollections ($category, $collection, $getProducts = true) {
         $sql = "SELECT DISTINCT Sub_Collection AS Value
-                                     FROM regency_products 
-                                     WHERE Category = :Category AND Collection = :Collection
-                                     ORDER BY Sub_Collection";
+                FROM regency_products 
+                WHERE Category = :Category AND `Collection` = :Collection
+                    AND Sub_Collection != ''
+                ORDER BY Sub_Collection";
+        
+        $return = [
+            'Filter' => $this->GetCategoryCollection($sql, $category, $collection)
+        ];
 
-        $category = $this->GetTextFromURL($categoryURL);
-        $collection = $this->GetTextFromURL($collectionURL);
-        return ['Filter' => $this->GetCategoryCollection($sql, $category, $collection), 'Products' => $this->GetProducts(0, $category, $collection) ];
+        if ($getProducts) {
+            $return['Products'] = $this->GetProducts(0, $category, $collection);
+        }
+
+        return $return;
     }
 
-    public function Products ($categoryURL, $collectionURL, $subcollectionURL) {
-        $category = $this->GetTextFromURL($categoryURL);
-        $collection = $this->GetTextFromURL($collectionURL);
-        $subcollection = $this->GetTextFromURL($subcollectionURL);
-
+    public function Products ($category, $collection, $subcollection) {
         return [ 'Products' => $this->GetProducts(0, $category, $collection, $subcollection) ];
     }
 }
