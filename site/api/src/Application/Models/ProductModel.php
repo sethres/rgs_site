@@ -6,7 +6,7 @@ use DateTime;
 use PDO;
 
 class ProductModel extends APIModel {
-    private $RowsPerPage = 16;
+    private $PerPage = 16;
     private $ImagePath = '/images/products/';
 
     public function __construct(ContainerInterface $container, Logger $logger, PDO $db) {
@@ -16,11 +16,11 @@ class ProductModel extends APIModel {
     private function GetCategoryCollection ($sql, $category = null, $collection = null) {
         $statement = $this->prepSQL($sql);
 
-        if ($category !== null) {
+        if (!empty($category)) {
             $statement->bindValue(":Category", $category);
         }
 
-        if ($collection !== null) {
+        if (!empty($collection)) {
             $statement->bindValue(":Collection", $collection);
         }
 
@@ -36,7 +36,10 @@ class ProductModel extends APIModel {
             return ["error" => $statement->errorInfo()];
         }
 
-        return $statement->fetchAll();
+        $return = $statement->fetchAll();
+        $statement->closeCursor();
+
+        return $return;
     }
 
     private function GetImage ($sku) {
@@ -49,48 +52,85 @@ class ProductModel extends APIModel {
         return 'https://via.placeholder.com/3000/ffffff/212529?text=IMG+Coming+Soon';
     }
 
-    private function GetProducts ($start_from = 0, $category = null, $collection = null, $subcollection = null) {
-        $sql = "SELECT Prefix, Name, SKU 
-                FROM regency_products 
-                ".($category !== null ? " WHERE Category = :Category" : "").
-                ($collection !== null ? " AND `Collection` = :Collection " : "").
-                ($subcollection !== null ? " AND Sub_Collection = :SubCollection " : "")."
-                GROUP BY Prefix 
-                ORDER BY Prefix, Name ASC 
-                LIMIT $start_from, ".$this->RowsPerPage;
-
-        $statement = $this->prepSQL($sql);
-
-        if ($category !== null) {
+    private function BindValues ($statement, $category = null, $collection = null, $subcollection = null) {
+        if (!empty($category)) {
             $statement->bindValue(":Category", $category);
         }
 
-        if ($collection !== null) {
+        if (!empty($collection)) {
             $statement->bindValue(":Collection", $collection);
         }
 
-        if ($subcollection !== null) {
+        if (!empty($subcollection)) {
             $statement->bindValue(":SubCollection", $subcollection);
         }
+    }
+
+    private function GetPages ($sql, $category = null, $collection = null, $subcollection = null) {
+        $columns = "COUNT(DISTINCT(Prefix)) ";
+        $statement = $this->prepSQL(str_replace('[columns]', $columns, $sql));
+
+        $this->BindValues($statement, $category, $collection, $subcollection);
 
         try {
             $statement->execute();
         } catch (PDOException $e) {
-			$this->Logger->error('Category/Collection Lookup (PDO Exception)', $e);
+			$this->Logger->error($type.'Category/Collection Lookup (PDO Exception)', $e);
             return ["error" => ($e->getMessage())];
         }
 
         if (!$statement) {
-			$this->Logger->error('Category/Collection Lookup (Statement)', $statement->errorInfo());
+			$this->Logger->error($type.'Category/Collection Lookup (Statement)', $statement->errorInfo());
+            return ["error" => $statement->errorInfo()];
+        }
+
+        $pages = $statement->fetch(PDO::FETCH_COLUMN);
+        $statement->closeCursor();
+
+        return ceil($pages / $this->PerPage);
+    }
+
+    private function GetProducts ($category = null, $collection = null, $subcollection = null, $page = 1) {
+        $start = ($page - 1) * $this->PerPage;
+        $columns = "Prefix, Name, SKU ";
+        $sql = "SELECT [columns] 
+                FROM regency_products 
+                ".(!empty($category) ? " WHERE Category = :Category" : "").
+                (!empty($collection) ? " AND `Collection` = :Collection " : "").
+                (!empty($subcollection) ? " AND Sub_Collection = :SubCollection " : "");
+        $groupBy = " GROUP BY Prefix ";
+        $orderBy = " ORDER BY Prefix, Name ASC ";
+        $limit = " LIMIT $start, ".$this->PerPage;
+
+        $statement = $this->prepSQL(str_replace('[columns]', $columns, $sql).$groupBy.$orderBy.$limit);
+
+        $this->BindValues($statement, $category, $collection, $subcollection);
+
+        try {
+            $statement->execute();
+        } catch (PDOException $e) {
+			$this->Logger->error($type.'Category/Collection Lookup (PDO Exception)', $e);
+            return ["error" => ($e->getMessage())];
+        }
+
+        if (!$statement) {
+			$this->Logger->error($type.'Category/Collection Lookup (Statement)', $statement->errorInfo());
             return ["error" => $statement->errorInfo()];
         }
 
         $products = $statement->fetchAll();
+        $statement->closeCursor();
+
         foreach ($products as $k => $product) {
             $products[$k]['Image'] = $this->GetImage($product['SKU']);
         }
+        $return['Results'] = $products;
 
-        return $products;
+        if ($page == 1) { //first page so get total pages
+            $return['Pages'] = $this->GetPages($sql, $category, $collection, $subcollection);
+        }
+
+        return $return;
     }
 
     public function Categories ($getProducts = true) {
@@ -104,7 +144,7 @@ class ProductModel extends APIModel {
         ];
 
         if ($getProducts) {
-            $return['Products'] = $this->GetProducts();
+            $return['Product'] = $this->GetProducts();
         }
 
         return $return;
@@ -115,13 +155,13 @@ class ProductModel extends APIModel {
                 FROM regency_products
                 WHERE Category = :Category AND `Collection` != ''
                 ORDER BY `Collection`";
-        
+                
         $return = [
             'Filter' => $this->GetCategoryCollection($sql, $category)
         ];
 
         if ($getProducts) {
-            $return['Products'] = $this->GetProducts(0, $category);
+            $return['Product'] = $this->GetProducts($category);
         }
 
         return $return;
@@ -139,13 +179,13 @@ class ProductModel extends APIModel {
         ];
 
         if ($getProducts) {
-            $return['Products'] = $this->GetProducts(0, $category, $collection);
+            $return['Product'] = $this->GetProducts($category, $collection);
         }
 
         return $return;
     }
 
-    public function Products ($category, $collection, $subcollection) {
-        return [ 'Products' => $this->GetProducts(0, $category, $collection, $subcollection) ];
+    public function Products ($category, $collection, $subcollection, $page) {
+        return [ 'Product' => $this->GetProducts($category, $collection, $subcollection, $page) ];
     }
 }

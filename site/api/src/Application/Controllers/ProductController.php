@@ -26,6 +26,6 @@ class ProductController extends APIController
     }
 
     function Products (Request $request, Response $response, array $args) {
-        $this->AddReturnData($this->Model->Products($this->Query['cat'], $this->Query['col'], $this->Query['sub']));
+        $this->AddReturnData($this->Model->Products($this->Query['cat'], $this->Query['col'], $this->Query['sub'], $this->Query['p']));
     }
 }
