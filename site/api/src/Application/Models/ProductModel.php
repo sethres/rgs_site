@@ -44,8 +44,9 @@ class ProductModel extends APIModel {
 
     private function GetImage ($sku) {
         if (file_exists($_SERVER['DOCUMENT_ROOT'].$this->ImagePath.$sku.'_1.jpg')) {
+            
             return $this->ImagePath.$sku.'_1.jpg';
-        } elseif ($_SERVER['DOCUMENT_ROOT'].file_exists($this->ImagePath.$sku.'.jpg')) {
+        } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].$this->ImagePath.$sku.'.jpg')) {
             return $this->ImagePath.$sku.'.jpg';
         }
 
