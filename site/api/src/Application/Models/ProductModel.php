@@ -90,8 +90,8 @@ class ProductModel extends APIModel {
         return ceil($pages / $this->PerPage);
     }
 
-    private function GetProducts ($category = null, $collection = null, $subcollection = null, $page = 1) {
-        $start = ($page - 1) * $this->PerPage;
+    private function GetProducts ($category = null, $collection = null, $subcollection = null, $page = 1, $getPages = false) {
+        $start = (intval($page) - 1) * $this->PerPage;
         $columns = "Prefix, Name, SKU ";
         $sql = "SELECT [columns] 
                 FROM regency_products 
@@ -126,14 +126,14 @@ class ProductModel extends APIModel {
         }
         $return['Results'] = $products;
 
-        if ($page == 1) { //first page so get total pages
+        if ($page == 1 || $getPages) { //first page so get total pages
             $return['Pages'] = $this->GetPages($sql, $category, $collection, $subcollection);
         }
 
         return $return;
     }
 
-    public function Categories ($getProducts = true) {
+    public function Categories () {
         $sql = "SELECT DISTINCT Category AS Value
                 FROM regency_products
                 WHERE Category != ''
@@ -143,14 +143,10 @@ class ProductModel extends APIModel {
             'Filter' => $this->GetCategoryCollection($sql)
         ];
 
-        if ($getProducts) {
-            $return['Product'] = $this->GetProducts();
-        }
-
         return $return;
     }
 
-    public function Collections ($category, $getProducts = true) {
+    public function Collections ($category) {
         $sql = "SELECT DISTINCT `Collection` AS Value
                 FROM regency_products
                 WHERE Category = :Category AND `Collection` != ''
@@ -160,14 +156,10 @@ class ProductModel extends APIModel {
             'Filter' => $this->GetCategoryCollection($sql, $category)
         ];
 
-        if ($getProducts) {
-            $return['Product'] = $this->GetProducts($category);
-        }
-
         return $return;
     }
 
-    public function SubCollections ($category, $collection, $getProducts = true) {
+    public function SubCollections ($category, $collection) {
         $sql = "SELECT DISTINCT Sub_Collection AS Value
                 FROM regency_products 
                 WHERE Category = :Category AND `Collection` = :Collection
@@ -178,14 +170,10 @@ class ProductModel extends APIModel {
             'Filter' => $this->GetCategoryCollection($sql, $category, $collection)
         ];
 
-        if ($getProducts) {
-            $return['Product'] = $this->GetProducts($category, $collection);
-        }
-
         return $return;
     }
 
-    public function Products ($category, $collection, $subcollection, $page) {
-        return [ 'Product' => $this->GetProducts($category, $collection, $subcollection, $page) ];
+    public function Products ($category, $collection, $subcollection, $page, $getPages) {
+        return [ 'Product' => $this->GetProducts($category, $collection, $subcollection, $page, $getPages) ];
     }
 }

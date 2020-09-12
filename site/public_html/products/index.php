@@ -35,7 +35,7 @@
   <script>
     let rollbarToken = '<?php echo getenv('ROLLBER_CLIENT_TOKEN') ?>';
   </script>
-  <script type="module" src="/vuejs/product-filters.js"></script>
+  <script type="module" src="/vuejs/product-listing.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js';
 import Router from 'https://cdn.jsdelivr.net/npm/vue-router@3.4.3/dist/vue-router.esm.browser.js';
-import productResults from '../components/ProductFilter/product-results.vue.js';
+import productListing from '../components/ProductListing/index.vue.js';
 
 Vue.use(Router);
 
@@ -10,11 +10,11 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'ProductResults',
-      component: productResults
+      name: 'ProductListing',
+      component: productListing
     },
     {
-      path: '/index.php', redirect: { name: 'ProductResults' }
+      path: '/index.php', redirect: { name: 'ProductListing' }
     }
     /*
     { // may want to improve 404 handling in the future but works for now, just not the best for internal links.

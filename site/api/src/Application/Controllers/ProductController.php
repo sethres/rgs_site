@@ -14,18 +14,18 @@ class ProductController extends APIController
     }
 
     function Categories (Request $request, Response $response, array $args) {
-        $this->AddReturnData($this->Model->Categories($this->Query['prod'] === 'true' ? true : false));
+        $this->AddReturnData($this->Model->Categories());
     }
 
     function Collections (Request $request, Response $response, array $args) {
-        $this->AddReturnData($this->Model->Collections($this->Query['cat'], $this->Query['prod'] === 'true' ? true : false));
+        $this->AddReturnData($this->Model->Collections($this->Query['cat']));
     }
 
     function SubCollections (Request $request, Response $response, array $args) {
-        $this->AddReturnData($this->Model->SubCollections($this->Query['cat'], $this->Query['col'], $this->Query['prod'] === 'true' ? true : false));
+        $this->AddReturnData($this->Model->SubCollections($this->Query['cat'], $this->Query['col']));
     }
 
     function Products (Request $request, Response $response, array $args) {
-        $this->AddReturnData($this->Model->Products($this->Query['cat'], $this->Query['col'], $this->Query['sub'], $this->Query['p']));
+        $this->AddReturnData($this->Model->Products($this->Query['cat'], $this->Query['col'], $this->Query['sub'], $this->Query['p'], array_key_exists('pgs', $this->Query) ? $this->Query['pgs'] : false));
     }
 }

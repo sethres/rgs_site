@@ -1,20 +1,26 @@
 import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js';
-import router from './router/product-filter.router.js';
-import API from './api/index.js';
-import productFilter from './components/ProductFilter/product-filter.vue.js'
+import API from '../../api/index.js';
+import productFilter from './product-filter.vue.js'
+import productResults from './product-results.vue.js'
 
-let app = Vue.component('ProductFilters', {
+let productListing = Vue.component('ProductListing', {
   template: `<div class="row py-5" v-if="initialized">
                 <div class="col-12 col-lg-2 py-3">
                   <productFilter type="Categories" :items="this.categories" @clicked="handleCategoryClick" />
                   <productFilter type="Collections" :items="this.collections" @clicked="handleCollectionClick" />
                   <productFilter type="Sub-Collections" :items="this.subcollections" @clicked="handleSubCollectionClick" />
                 </div>
-                <router-view :products="products" :page="page" :pages="pages" @changePage="handleChangePage"></router-view>
+                <productResults :products="products" :page="page" :pages="pages" @changePage="handleChangePage" />
              </div>`,
 
   components: {
-    productFilter
+    productFilter,
+    productResults
+  },
+
+  beforeRouteUpdate (to, from, next) {
+    this.loadData(to);
+    next();
   },
 
   data: () => ({
@@ -24,42 +30,59 @@ let app = Vue.component('ProductFilters', {
     collection: '',
     initialized: false,
     page: 1,
-    pages: 12,
+    pages: 0,
     products: [],
     subcollections: [],
     subcollection: ''
   }),
 
   created () {
-    if (typeof this.$route.query.p !== 'undefined' && !isNaN(this.$route.query.p)) {
-      this.page = parseInt(this.$route.query.p);
-    }
-    if (this.$route.query.cat) {
-      this.category = this.$route.query.cat;
-
-      if (this.$route.query.col) {
-        this.collection = this.$route.query.col;
-
-        if (this.$route.query.sub) {
-          this.subcollection = this.$route.query.sub;
-          this.getProducts();
-        }
-        this.getFilter('SubCollections', this.category, this.collection, (this.subcollection === '' ? true : false));
-      }
-      this.getFilter('Collections', this.category, '', (this.collection === '' ? true : false));
-    }
-    this.getFilter('Categories', '', '', (this.category === '' ? true : false));
+    this.loadData(this.$route, true);
   },
 
   methods: {
-    getFilter (filterType, category, collection, getProducts) {
-      if (typeof getProducts === 'undefined') {
-        getProducts = true;
+    loadData (newRoute, initialLoad) {
+      if (typeof newRoute.query.p !== 'undefined' && !isNaN(newRoute.query.p)) {
+        this.page = parseInt(newRoute.query.p);
+      } else {
+        this.page = 1;
       }
-      
+      if (this.categories.length === 0) { //initial page load
+        this.getFilter('Categories', '', '', (this.category === '' ? true : false));
+      }
+      if (newRoute.query.cat) { //category exists in the querystring
+        if (newRoute.query.cat !== this.category) { //category changed so get collections
+          this.category = newRoute.query.cat;
+          this.getFilter('Collections', this.category);
+        }
+          if (newRoute.query.col) { //collection exists in the querystring
+            if (newRoute.query.col !== this.collection) { //collection changed so get subcollections
+              this.collection = newRoute.query.col;
+              this.getFilter('SubCollections', this.category, this.collection);
+            }
+              if (newRoute.query.sub) { //subcollection exists in the querystring
+                this.subcollection = newRoute.query.sub;
+              } else {
+                this.subcollection = '';
+              }
+          } else {
+            this.collection = '';
+            this.subcollection = '';
+            this.subcollections = [];
+          }
+      } else {
+        this.category = '';
+        this.collection = '';
+        this.collections = [];
+        this.subcollection = '';
+        this.subcollections = [];
+      }
+      this.getProducts(this.page, initialLoad);
+    },
+
+    getFilter (filterType, category, collection) {      
       let url = filterType + (typeof category !== 'undefined' && category !== '' ? '?cat=' + encodeURIComponent(category) : '?') + 
-        (typeof collection !== 'undefined' && collection !== '' ? '&col=' + encodeURIComponent(collection) : '') + 
-        '&prod=' + getProducts;
+        (typeof collection !== 'undefined' && collection !== '' ? '&col=' + encodeURIComponent(collection) : '');
       API.get(url, {
         rollbarMessage: 'Error getting ' + filterType,
         success: data => {
@@ -71,24 +94,11 @@ let app = Vue.component('ProductFilters', {
                   this.categories = data.Filter;
                   break;
                 case 'Collections':
-                  this.category = category;
-                  this.collections = [];
-                  this.collection = '';
-                  this.subcollections = [];
-                  this.subcollection = '';
                   this.collections = data.Filter;
                   break;
                 case 'SubCollections':
-                  this.collection = collection;
-                  this.subcollections = [];
-                  this.subcollection = '';
                   this.subcollections = data.Filter;
                   break;
-              }
-              if (typeof data.Product !== 'undefined') {
-                this.products = data.Product.Results;
-                this.pages = data.Product.Pages;
-                this.page = 1;
               }
             }
           }
@@ -96,12 +106,12 @@ let app = Vue.component('ProductFilters', {
       }, this)
     },
 
-    getProducts (page, subcollection) {
+    getProducts (page, initialLoad) {
       if (typeof page === 'undefined') {
         page = 1;
       }
       let url = 'Products?cat=' + encodeURIComponent(this.category) + '&col=' + encodeURIComponent(this.collection) + 
-        '&sub=' + encodeURIComponent(this.subcollection) + '&p=' + page;
+        '&sub=' + encodeURIComponent(this.subcollection) + '&p=' + page + (initialLoad === true ? '&pgs=true' : '');
       API.get(url, {
         rollbarMessage: 'Error getting products',
         success: data => {
@@ -110,10 +120,6 @@ let app = Vue.component('ProductFilters', {
               this.products = data.Product.Results;
               if (typeof data.Product.Pages !== 'undefined') {
                 this.pages = data.Product.Pages;
-              }
-              this.page = page;
-              if (typeof subcollection !== 'undefined') {
-                this.subcollection = subcollection;
               }
             }
           }
@@ -139,12 +145,14 @@ let app = Vue.component('ProductFilters', {
     },
 
     navigate (q) {
+      let query = Object.assign({}, this.$route.query);
+      delete query.col;
+
       let route = {
-        name: 'ProductResults',
         query: q
       };
 
-      if (route.name !== this.$router.currentRoute.name || !this.sameQuery(route.query, this.$router.currentRoute.query)) {
+      if (!this.sameQuery(route.query, this.$router.currentRoute.query)) {
         this.$router.push(route);
 
         return true;
@@ -156,7 +164,6 @@ let app = Vue.component('ProductFilters', {
         cat: filter
       };
       this.navigate(q);
-      this.getFilter('Collections', filter);
     },
 
     handleCollectionClick (filter) {
@@ -165,17 +172,15 @@ let app = Vue.component('ProductFilters', {
         col: filter
       };
       this.navigate(q);
-      this.getFilter('SubCollections', this.category, filter);
     },
 
     handleSubCollectionClick (filter) {
       let q = {
         cat: this.category,
         col: this.collection,
-        sub: this.subcollection
+        sub: filter
       };
       this.navigate(q);
-      this.getProducts(1, filter);
     },
 
     handleChangePage (page) {
@@ -193,17 +198,8 @@ let app = Vue.component('ProductFilters', {
       }
       q.p = page;
       this.navigate(q);
-      this.getProducts(page);
     }
   }
-})
+});
 
-new Vue({
-    el: '#app',
-    router,
-    template: '<ProductFilters />',
-    components: {
-      app
-    }
-  });
-  
+export default productListing;
