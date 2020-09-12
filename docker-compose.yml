@@ -13,6 +13,7 @@ services:
       - ./site/api/src:/var/www/api/src
       - ./site/api/templates:/var/www/api/templates
       - ./site/api/composer.json:/var/www/api/composer.json
+      - ./site/api/composer.lock:/var/www/api/composer.lock
       - ./site/public_html:/var/www/html
       - ./logs:/var/log/apache2
     expose:
