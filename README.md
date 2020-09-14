@@ -18,6 +18,7 @@
 The API is using slim framework 4.1 (http://www.slimframework.com/).
 Upgrades can be made using composer.
 Most changes to the API will be made in these files:
+- app/settings.php - database connection info is here
 - app/routes.php - to add new routes to get different data or modify existing routes
 - src/application/Controllers/ProductController.php - to edit existing API calls or when adding a new route
 - src/application/Models/ProductModel.php - to edit data returned for existing API calls or adding new data for a new route
@@ -26,3 +27,4 @@ Most changes to the API will be made in these files:
 The front end was written in Vue.js 2.6.12 and was built without npm/webpack to make it easier to pick up quickly and remove the need for a build process.
 To upgrade Vue, search for 2.6.12 and replace that with the desired version.
 Most changes to the frontend will be made in the component files in the components folder.
+The rollbar configuration is in /products/index.php to configure when it sends the development/staging/production environment values.
