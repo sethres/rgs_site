@@ -84,7 +84,7 @@ let productListing = Vue.component('ProductListing', {
       let url = filterType + (typeof category !== 'undefined' && category !== '' ? '?cat=' + encodeURIComponent(category) : '?') + 
         (typeof collection !== 'undefined' && collection !== '' ? '&col=' + encodeURIComponent(collection) : '');
       API.get(url, {
-        rollbarMessage: 'Error getting ' + filterType,
+        errorMessage: 'Error getting ' + filterType,
         success: data => {
           if (typeof data !== 'undefined') {
             this.initialized = true;
@@ -102,6 +102,9 @@ let productListing = Vue.component('ProductListing', {
               }
             }
           }
+        },
+        error: () => {
+          alert('Eror getting ' + filterType);
         }
       }, this)
     },
@@ -113,7 +116,7 @@ let productListing = Vue.component('ProductListing', {
       let url = 'Products?cat=' + encodeURIComponent(this.category) + '&col=' + encodeURIComponent(this.collection) + 
         '&sub=' + encodeURIComponent(this.subcollection) + '&p=' + page + (initialLoad === true ? '&pgs=true' : '');
       API.get(url, {
-        rollbarMessage: 'Error getting products',
+        errorMessage: 'Error getting products',
         success: data => {
           if (typeof data !== 'undefined') {
             if (typeof data.Product !== 'undefined') {
@@ -123,6 +126,9 @@ let productListing = Vue.component('ProductListing', {
               }
             }
           }
+        },
+        error: () => {
+          alert('Error getting products');
         }
       }, this)
     },

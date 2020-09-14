@@ -5,6 +5,11 @@ let app = Vue.component('App', {
   template: `<router-view></router-view>`
 });
 
+Vue.config.errorHandler = (err, vm, info) => {
+  Rollbar.error(err);
+  throw err; // rethrow
+};
+
 new Vue({
     el: '#app',
     router,

@@ -1,14 +1,13 @@
 export default {
   API: class API {
-    constructor (url, settings, vue, outsideAPI) {
-      this.url = '//' + window.location.hostname + '/' + (!outsideAPI ? 'api/' : '') + url
+    constructor (url, settings, vue) {
+      this.url = '//' + window.location.hostname + '/api/' + url
 
       this.settings = {
-        alert: null, // function to handle alerts
         data: {}, // data to be posted
         error: null,
         errorMessage: '', // error message
-        requestSettings: { // request settings for heaeders/response type
+        requestSettings: { // request settings for headers/response type
           headers: {}
         },
         success: null // success callback function
@@ -71,7 +70,9 @@ export default {
 
     error (err) {
       if (this.settings.errorMessage !== '') {
-        this.vue.$store.commit('SET_TOAST_MESSAGE', { message: this.settings.errorMessage })
+        Rollbar.error(this.settings.errorMessage, err)
+      } else {
+        Rollbar.error('API error', err)
       }
 
       if (typeof this.settings.error === 'function') {
@@ -90,8 +91,8 @@ export default {
     }
   },
 
-  get (url, settings, vue, outsideAPI = false) {
-    let API = new this.API(url, settings, vue, outsideAPI)
+  get (url, settings, vue) {
+    let API = new this.API(url, settings, vue)
     API.get()
   }
 }
