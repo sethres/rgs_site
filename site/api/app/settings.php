@@ -6,17 +6,24 @@ use DI\ContainerBuilder;
 return function (ContainerBuilder $containerBuilder) {
     // default everything to production
     $displayErrorDetails = false;
-    $environment = getenv('ENVIRONMENT');
+    $environment = 'production';
     $dbSettings = [
-            'host' => getenv('DB_HOST'),
-            'dbname' => getenv('DB_NAME'),
-            'user' => getenv('DB_USER'),
-            'pass' => getenv('DB_PASS')
+            'host' => 'production_db_host',
+            'dbname' => 'production_db_name',
+            'user' => 'production_db_user',
+            'pass' => 'production_db_password'
         ];
 
-    if ($environment === 'development') {
-        $displayErrorDetails = true;
-    }
+        if ($_SERVER['HTTP_HOST'] == 'localhost') {
+            $dbSettings = [
+                'host' => '127.0.0.1',
+                'dbname' => 'rgsfurniture_dev',
+                'user' => 'rgsfurnituredev_user',
+                'pass' => 'zuc$TPOI4&n6VfLAbSI54p$0'
+            ];
+            $environment = 'development';
+            $displayErrorDetails = true;
+        }
 
     // Global Settings Object
     $containerBuilder->addDefinitions([
@@ -29,7 +36,7 @@ return function (ContainerBuilder $containerBuilder) {
                 'path' => __DIR__ . '/../logs/app.log',
                 'level' => \Monolog\Logger::DEBUG,
                 'rollbar_config' => array(
-                    'access_token' => getenv('ROLLBAR_ACCESS_TOKEN'),
+                    'access_token' => '240aa835a0d14189b0a75f029cb85185',
                     'environment' => $environment
                 )
             ]
