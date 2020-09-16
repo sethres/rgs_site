@@ -1,6 +1,7 @@
 import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js';
 import API from '../../api/index.js';
 import carousel from './carousel.vue.js';
+import options from './options.vue.js';
 
 let product = Vue.component('Product', {
   template: `<div v-if="initialized">
@@ -21,25 +22,13 @@ let product = Vue.component('Product', {
                       <p class="my-4" style="font-weight: 400; color: #6c757d;">{{ (product.Description !== '' ? product.Description : 'Description Currently Unavailable') }}</p>
                       <p>Color:</p>
                       <hr class="p-0 ml-0">
-                      <div style="font-size: 0">
-                        <a href="#" style="font-size: .85rem"
-                          :class="['btn btn-outline-secondary shadow-none py-3 px-4 m-1', (c === color ? 'active' : '')]" 
-                          v-for="c in colors"
-                          v-on:click="colorClick(c, $event)"
-                        >{{ c }}</a>
-                      </div>
+                      <options :options="colors" :disabled="disabledColors" :selected="color" @optionClicked="handleColorClick" />
                       <p class='pt-5' style='font-weight: 400; color: #6c757d;' v-if="configurations.length === 0">No Configurations Available</p>
                       <hr v-if="configurations.length === 0">
                       <p class="mt-5" v-if="configurations.length > 0">Configuration:</p>
                       
                       <hr class="p-0 ml-0" v-if="configurations.length > 0">
-                      <div div style="font-size: 0" v-if="configurations.length > 0">
-                        <a href="#" style="font-size: .85rem"
-                          :class="['btn btn-outline-secondary shadow-none py-3 px-4 m-1', (config === configuration ? 'active' : '')]" 
-                          v-for="config in configurations"
-                          v-on:click="configClick(config, $event)"
-                        >{{ config }}</a>
-                      </div>
+                      <options :options="configurations" :disabled="disabledConfigs" :selected="configuration" @optionClicked="handleConfigClick" />
                     </div>
                   </div>
                 </div>
@@ -106,7 +95,8 @@ let product = Vue.component('Product', {
              </div>`,
 
   components: {
-    carousel
+    carousel,
+    options
   },
 
   beforeRouteUpdate (to, from, next) {
@@ -121,6 +111,8 @@ let product = Vue.component('Product', {
     color:'',
     configurations: [],
     configuration: '',
+    disabledColors: [],
+    disabledConfigs: [],
     initialized: false,
     product: [],
     images: []
@@ -215,8 +207,7 @@ let product = Vue.component('Product', {
       }
     },
 
-    colorClick (color, e) {
-      e.preventDefault();
+    handleColorClick (color) {
       let q = {
         color: color,
         config: this.configuration
@@ -224,8 +215,7 @@ let product = Vue.component('Product', {
       this.navigate(q);
     },
 
-    configClick (configuration, e) {
-      e.preventDefault();
+    handleConfigClick (configuration) {
       let q = {
         color: this.color,
         config: configuration
