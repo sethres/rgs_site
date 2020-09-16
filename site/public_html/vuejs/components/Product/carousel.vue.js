@@ -12,7 +12,7 @@ let carousel = Vue.component('Carousel', {
                   </div>
                   <ul class="carousel-indicators list-inline mb-0 mt-3 mx-auto">
                       <li :class="['list-inline-item', (index === 0 ? 'active' : ''), 'border']" v-for="(image, index) in images">
-                        <a id="carousel-selector-0" class="selected" :key="image" :data-slide-to="index" data-target="#detCarousel" v-on:click="clicked(p, $event)">
+                        <a id="carousel-selector-0" class="selected" :key="image" :data-slide-to="index" data-target="#detCarousel">
                           <img class="d-block" :src="image" :alt="image">
                         </a>
                       </li>
@@ -31,14 +31,7 @@ let carousel = Vue.component('Carousel', {
 
         return this.imagesProp;
       }
-    },
-
-    methods: {
-      clicked (page, e) {
-        e.preventDefault();
-        this.$emit('pageClicked', page);
-      }
     }
   });
 
-export default carousel
+export default carousel;
