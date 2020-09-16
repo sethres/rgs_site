@@ -177,4 +177,65 @@ class ProductModel extends APIModel {
     public function Products ($category, $collection, $subcollection, $page, $getPages) {
         return [ 'Product' => $this->GetProducts($category, $collection, $subcollection, $page, $getPages) ];
     }
+
+    private function Colors ($prefix) {
+        $sql = "SELECT DISTINCT Color 
+            FROM regency_products 
+            WHERE Prefix = :Prefix";
+        
+        return $this->GetResults($sql, [':Prefix' => $prefix], 'Product Color Lookup', PDO::FETCH_COLUMN);
+    }
+
+    private function Configurations ($prefix) {
+        $sql = "SELECT DISTINCT `Configuration`
+                FROM regency_products 
+                WHERE Prefix = :Prefix";
+        
+        return $this->GetResults($sql, [':Prefix' => $prefix], 'Product Configuration Lookup', PDO::FETCH_COLUMN);
+    }
+
+    private function DefaultOptions ($prefix) {
+        $sql = "SELECT DISTINCT `Configuration`, Color
+            FROM regency_products 
+            WHERE Prefix = :Prefix
+            LIMIT 1";
+
+        return $this->GetResults($sql, [':Prefix' => $prefix], 'Product Default Configuration Lookup', PDO::FETCH_ASSOC, false);
+    }
+
+    public function ProductOptions ($prefix, $getDefault) {
+        $return = [];
+        $return['Colors'] = $this->Colors($prefix);
+        $return['Configurations'] = $this->Configurations($prefix);
+
+        if ($getDefault) {
+            //get the default (1st) color/configuration option
+            $return['DefaultConfig'] = $this->DefaultOptions($prefix);
+        }
+
+        return $return;
+    }
+
+    private function ProductData ($prefix, $color, $configuration) {
+        $sql = "SELECT * 
+            FROM regency_products 
+            WHERE Prefix = :Prefix AND Color = :Color AND `Configuration` = :Config";
+
+        return $this->GetResults($sql, [':Prefix' => $prefix, ':Color' => $color, ':Config' => $configuration], 'Product Default Configuration Lookup', PDO::FETCH_ASSOC, false);
+    }
+
+    private function ProductImages ($sku) {
+        return glob($this->ImagePath.$sku.'*.jpg');
+    }
+
+    public function Product ($prefix, $color, $configuration) {
+        $return = [];
+
+        $return['Product'] = $this->ProductData($prefix, $color, $configuration);
+        if (array_key_exists('SKU', $return['Product'])) {
+            $return['Images'] = $this->ProductImages($return['Product']['SKU']);
+        }
+
+        return $return;
+    }
 }

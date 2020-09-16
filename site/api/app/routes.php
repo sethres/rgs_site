@@ -23,6 +23,10 @@ return function (App $app) {
         $group->get('/SubCollections', 'ProductController')->setName('SubCollections');
 
         $group->get('/Products', 'ProductController')->setName('Products');
+
+        $group->get('/ProductOptions/{prefix:[A-Za-z0-9\-]+}/{getDefault:[01]}', 'ProductController')->setName('ProductOptions');
+
+        $group->get('/Product/{prefix:[A-Za-z0-9\-]+}', 'ProductController')->setName('Product');
     });
 
     $app->options('/{routes:.+}', function ($request, $response, $args) {

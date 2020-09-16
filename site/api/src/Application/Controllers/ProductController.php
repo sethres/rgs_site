@@ -28,4 +28,12 @@ class ProductController extends APIController
     function Products (Request $request, Response $response, array $args) {
         $this->AddReturnData($this->Model->Products($this->Query['cat'], $this->Query['col'], $this->Query['sub'], $this->Query['p'], array_key_exists('pgs', $this->Query) ? $this->Query['pgs'] : false));
     }
+
+    function ProductOptions (Request $request, Response $response, array $args) {
+        $this->AddReturnData($this->Model->ProductOptions($this->Args['prefix'], $this->Args['getDefault']));
+    }
+
+    function Product (Request $request, Response $response, array $args) {
+        $this->AddReturnData($this->Model->Product($this->Args['prefix'], $this->Query['color'], $this->Query['config']));
+    }
 }
