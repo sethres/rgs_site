@@ -13,35 +13,6 @@ class ProductModel extends APIModel {
     	parent::__construct($container, $logger, $db);
     }
 
-    private function GetCategoryCollection ($sql, $category = null, $collection = null) {
-        $statement = $this->prepSQL($sql);
-
-        if (!empty($category)) {
-            $statement->bindValue(":Category", $category);
-        }
-
-        if (!empty($collection)) {
-            $statement->bindValue(":Collection", $collection);
-        }
-
-        try {
-            $statement->execute();
-        } catch (PDOException $e) {
-			$this->Logger->error('Category/Collection Lookup (PDO Exception)', $e);
-            return ["error" => ($e->getMessage())];
-        }
-
-        if (!$statement) {
-			$this->Logger->error('Category/Collection Lookup (Statement)', $statement->errorInfo());
-            return ["error" => $statement->errorInfo()];
-        }
-
-        $return = $statement->fetchAll();
-        $statement->closeCursor();
-
-        return $return;
-    }
-
     private function GetImage ($sku) {
         if (file_exists($_SERVER['DOCUMENT_ROOT'].$this->ImagePath.$sku.'_1.jpg')) {
             
@@ -53,47 +24,34 @@ class ProductModel extends APIModel {
         return 'https://via.placeholder.com/3000/ffffff/212529?text=IMG+Coming+Soon';
     }
 
-    private function BindValues ($statement, $category = null, $collection = null, $subcollection = null) {
+    private function BindParams ($category = null, $collection = null, $subcollection = null) {
+        $params = [];
         if (!empty($category)) {
-            $statement->bindValue(":Category", $category);
+            $params[':Category'] = $category;
         }
 
         if (!empty($collection)) {
-            $statement->bindValue(":Collection", $collection);
+            $params[':Collection'] = $collection;
         }
 
         if (!empty($subcollection)) {
-            $statement->bindValue(":SubCollection", $subcollection);
+            $params[':SubCollection'] = $subcollection;
         }
+
+        return $params;
     }
 
     private function GetPages ($sql, $category = null, $collection = null, $subcollection = null) {
         $columns = "COUNT(DISTINCT(Prefix)) ";
-        $statement = $this->prepSQL(str_replace('[columns]', $columns, $sql));
-
-        $this->BindValues($statement, $category, $collection, $subcollection);
-
-        try {
-            $statement->execute();
-        } catch (PDOException $e) {
-			$this->Logger->error($type.'Category/Collection Lookup (PDO Exception)', $e);
-            return ["error" => ($e->getMessage())];
-        }
-
-        if (!$statement) {
-			$this->Logger->error($type.'Category/Collection Lookup (Statement)', $statement->errorInfo());
-            return ["error" => $statement->errorInfo()];
-        }
-
-        $pages = $statement->fetch(PDO::FETCH_COLUMN);
-        $statement->closeCursor();
+        $params = $this->BindParams($category, $collection, $subcollection);
+        $pages = $this->GetResults(str_replace('[columns]', $columns, $sql), $params, 'Product Pages', PDO::FETCH_COLUMN, false);
 
         return ceil($pages / $this->PerPage);
     }
 
     private function GetProducts ($category = null, $collection = null, $subcollection = null, $page = 1, $getPages = false) {
         $start = (intval($page) - 1) * $this->PerPage;
-        $columns = "Prefix, Name, SKU ";
+        $columns = "Prefix, Name, SKU, Color, Configuration ";
         $sql = "SELECT [columns] 
                 FROM regency_products 
                 ".(!empty($category) ? " WHERE Category = :Category" : "").
@@ -102,25 +60,8 @@ class ProductModel extends APIModel {
         $groupBy = " GROUP BY Prefix ";
         $orderBy = " ORDER BY Prefix, Name ASC ";
         $limit = " LIMIT $start, ".$this->PerPage;
-
-        $statement = $this->prepSQL(str_replace('[columns]', $columns, $sql).$groupBy.$orderBy.$limit);
-
-        $this->BindValues($statement, $category, $collection, $subcollection);
-
-        try {
-            $statement->execute();
-        } catch (PDOException $e) {
-			$this->Logger->error($type.'Category/Collection Lookup (PDO Exception)', $e);
-            return ["error" => ($e->getMessage())];
-        }
-
-        if (!$statement) {
-			$this->Logger->error($type.'Category/Collection Lookup (Statement)', $statement->errorInfo());
-            return ["error" => $statement->errorInfo()];
-        }
-
-        $products = $statement->fetchAll();
-        $statement->closeCursor();
+        $params = $this->BindParams($category, $collection, $subcollection);
+        $products = $this->GetResults(str_replace('[columns]', $columns, $sql).$groupBy.$orderBy.$limit, $params, 'Product Lookup');
 
         foreach ($products as $k => $product) {
             $products[$k]['Image'] = $this->GetImage($product['SKU']);
@@ -141,7 +82,7 @@ class ProductModel extends APIModel {
                 ORDER BY Category";
 
         $return = [
-            'Filter' => $this->GetCategoryCollection($sql)
+            'Filter' => $this->GetResults($sql, [], 'Category Lookup')
         ];
 
         return $return;
@@ -154,7 +95,7 @@ class ProductModel extends APIModel {
                 ORDER BY `Collection`";
                 
         $return = [
-            'Filter' => $this->GetCategoryCollection($sql, $category)
+            'Filter' => $this->GetResults($sql, [ ':Category' => $category ], 'Collection Lookup')
         ];
 
         return $return;
@@ -168,7 +109,7 @@ class ProductModel extends APIModel {
                 ORDER BY Sub_Collection";
         
         $return = [
-            'Filter' => $this->GetCategoryCollection($sql, $category, $collection)
+            'Filter' => $this->GetResults($sql, [ ':Category' => $category, ':Collection' => $collection ], 'Subcollection Lookup')
         ];
 
         return $return;
