@@ -1,6 +1,8 @@
 # RGS website
 
 ## Running without docker
+1. The root of the site for Apache is /site/public_html.
+1. Copy the rewrite rules from site/docker_config/site.conf to your local apache config.
 1. Install composer (https://getcomposer.org/download/).
 1. Navigate to site/api in a terminal.
 1. Run `composer install`.
