@@ -172,6 +172,7 @@ let product = Vue.component('Product', {
             this.disabledColors = data.Disable.Colors;
             this.disabledConfigs = data.Disable.Configurations;
             this.initialized = true;
+            document.title = 'Products: ' + this.$route.params.prefix;
           }
         },
         error: () => {
