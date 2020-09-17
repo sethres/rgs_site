@@ -51,14 +51,14 @@ class ProductModel extends APIModel {
 
     private function GetProducts ($category = null, $collection = null, $subcollection = null, $page = 1, $getPages = false) {
         $start = (intval($page) - 1) * $this->PerPage;
-        $columns = "Prefix, Name, SKU, Color, Configuration ";
+        $columns = "Prefix, MIN(Name) AS Name, MIN(SKU) AS SKU, MIN(Color) AS Color, MIN(Configuration) AS Configuration ";
         $sql = "SELECT [columns] 
                 FROM regency_products 
                 ".(!empty($category) ? " WHERE Category = :Category" : "").
                 (!empty($collection) ? " AND `Collection` = :Collection " : "").
                 (!empty($subcollection) ? " AND Sub_Collection = :SubCollection " : "");
         $groupBy = " GROUP BY Prefix ";
-        $orderBy = " ORDER BY Prefix, Name ASC ";
+        $orderBy = " ORDER BY Prefix";
         $limit = " LIMIT $start, ".$this->PerPage;
         $params = $this->BindParams($category, $collection, $subcollection);
         $products = $this->GetResults(str_replace('[columns]', $columns, $sql).$groupBy.$orderBy.$limit, $params, 'Product Lookup');
