@@ -122,7 +122,8 @@ class ProductModel extends APIModel {
     private function Colors ($prefix) {
         $sql = "SELECT DISTINCT Color 
             FROM regency_products 
-            WHERE Prefix = :Prefix";
+            WHERE Prefix = :Prefix
+            ORDER BY Color";
         
         return $this->GetResults($sql, [':Prefix' => $prefix], 'Product Color Lookup', PDO::FETCH_COLUMN);
     }
@@ -130,7 +131,8 @@ class ProductModel extends APIModel {
     private function Configurations ($prefix) {
         $sql = "SELECT DISTINCT `Configuration`
                 FROM regency_products 
-                WHERE Prefix = :Prefix";
+                WHERE Prefix = :Prefix
+                ORDER BY `Configuration`";
         
         return $this->GetResults($sql, [':Prefix' => $prefix], 'Product Configuration Lookup', PDO::FETCH_COLUMN);
     }
@@ -139,6 +141,7 @@ class ProductModel extends APIModel {
         $sql = "SELECT DISTINCT `Configuration`, Color
             FROM regency_products 
             WHERE Prefix = :Prefix
+            ORDER BY Color, `Configuration`
             LIMIT 1";
 
         return $this->GetResults($sql, [':Prefix' => $prefix], 'Product Default Configuration Lookup', PDO::FETCH_ASSOC, false);
