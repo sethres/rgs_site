@@ -10,7 +10,7 @@ let product = Vue.component('Product', {
                   <div class="row">
                     <div class="col-lg-6 pb-5 pb-lg-0">
                       <div class="row px-3">
-                        <carousel :images="images" />
+                        <carousel :imagesProp="images" />
                       </div>
                     </div>
                     <div class="col-lg-6 mb-3">

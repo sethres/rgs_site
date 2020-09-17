@@ -169,7 +169,13 @@ class ProductModel extends APIModel {
     }
 
     private function ProductImages ($sku) {
-        return glob($this->ImagePath.$sku.'*.jpg');
+        $images = glob($_SERVER['DOCUMENT_ROOT'].$this->ImagePath.$sku.'*.jpg');
+
+        foreach ($images as $k => $img) {
+            $images[$k] = \str_replace($_SERVER['DOCUMENT_ROOT'], '', $img);
+        }
+
+        return $images;
     }
 
     public function Product ($prefix, $color, $configuration) {
