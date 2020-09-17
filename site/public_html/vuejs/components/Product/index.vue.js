@@ -169,6 +169,8 @@ let product = Vue.component('Product', {
           if (typeof data !== 'undefined') {
             this.product = data.Product;
             this.images = data.Images;
+            this.disabledColors = data.Disable.Colors;
+            this.disabledConfigs = data.Disable.Configurations;
             this.initialized = true;
           }
         },

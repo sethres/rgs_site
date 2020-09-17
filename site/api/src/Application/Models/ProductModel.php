@@ -160,6 +160,33 @@ class ProductModel extends APIModel {
         return $return;
     }
 
+    private function DisableOptions ($prefix, $color, $configuration) {
+        $return = [];
+
+        $sql = "SELECT DISTINCT Color 
+                FROM regency_products 
+                WHERE Prefix = :Prefix
+                    AND Color NOT IN(
+                        SELECT Color
+                        FROM regency_products
+                        WHERE Prefix = :Prefix2 AND Configuration = :Config)";
+
+        $return['Colors'] = $this->GetResults($sql, [':Prefix' => $prefix, ':Prefix2' => $prefix, ':Config' => $configuration], 'Product Disabled Colors Lookup', PDO::FETCH_COLUMN);
+
+        $sql = "SELECT DISTINCT Configuration 
+                FROM regency_products 
+                WHERE Prefix = :Prefix 
+                    AND Configuration NOT IN(
+                        SELECT Configuration
+                        FROM regency_products
+                        WHERE Prefix = :Prefix2 AND Color = :Color)";
+
+        $return['Configurations'] = $this->GetResults($sql, [':Prefix' => $prefix, ':Prefix2' => $prefix, ':Color' => $color], 'Product Disabled Configurations Lookup', PDO::FETCH_COLUMN);
+
+        return $return;
+
+    }
+
     private function ProductData ($prefix, $color, $configuration) {
         $sql = "SELECT * 
             FROM regency_products 
@@ -185,6 +212,8 @@ class ProductModel extends APIModel {
         if (array_key_exists('SKU', $return['Product'])) {
             $return['Images'] = $this->ProductImages($return['Product']['SKU']);
         }
+
+        $return['Disable'] = $this->DisableOptions($prefix, $color, $configuration);
 
         return $return;
     }
