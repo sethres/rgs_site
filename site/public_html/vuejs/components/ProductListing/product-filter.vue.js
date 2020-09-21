@@ -2,11 +2,11 @@ import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js
 
 let productFilter = Vue.component('ProductFilter', {
   template: `<div class="pb-5" v-if="items.length > 0">
-              <button :id="type" class="btn btn-outline-dark shadow-none" type="button" data-toggle="collapse" :data-target="'#collapse' + this.type" aria-expanded="false" aria-controls="'collapse' + this.type">
-                {{ this.type }} <i class="fas fa-caret-down"></i>
-              </button>
+              <a :id="type">
+                {{ this.type }}
+              </a>
               <hr class="p-0 ml-0">
-              <div :id="'collapse' + this.type" class="collapse">
+              <div :id="this.type">
                 <ul class="list-unstyled">
                   <li v-for="item in items" class="mb-1" :key="item.URL">
                     <a href="#" style="font-size: .85rem;" :id="item.Value" v-on:click="clicked(item.Value, $event)">{{ item.Value }}</a>
