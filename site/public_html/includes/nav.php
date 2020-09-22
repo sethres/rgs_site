@@ -1,6 +1,6 @@
 <nav class="container-fluid bg-white border-bottom">
   <div class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="index.php">rgs</a>
+    <a class="navbar-brand" href="/">rgs</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fas fa-angle-double-down"></i>
     </button>
@@ -8,13 +8,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav">
         <li <?php if ($pgTitle=="Home") echo " id=\"currentpage\""; ?> class="nav-item first" data-toggle="tooltip" data-placement="bottom" title="Home">
-          <a class="nav-link" href="index.php">
+          <a class="nav-link" href="/">
             <i class="fas fa-home"></i>
             <span class="nav-link-text">Home</span>
           </a>
         </li>
         <li <?php if ($pgTitle=="Products") echo " id=\"currentpage\""; ?> class="nav-item" data-toggle="tooltip" data-placement="bottom" title="Products">
-          <a class="nav-link" href="products.php">
+          <a class="nav-link" href="/products">
             <i class="fas fa-chair"></i>
             <span class="nav-link-text">Products</span>
           </a>

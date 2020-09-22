@@ -102,11 +102,9 @@ a:hover {
 }
 .navbar .navbar-nav .nav-item .nav-link-text {
   margin-left: 2.5rem;
-}
-@media (min-width: 0px) {
-  .navbar .navbar-nav .nav-item .nav-link-text {
-    display: inline-block;
-  }
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 1rem;
 }
 @media (min-width: 992px) {
   .navbar .navbar-nav .nav-item .nav-link-text {
@@ -220,11 +218,11 @@ a:hover {
   font-weight: bold;
   text-shadow: 0 0 0.3px currentColor, 0 0 0.3px currentColor;
 }
-.productlayout button {
-  margin-bottom: 1rem;
+.productlayout .filtertype {
+  margin-bottom: 10px;
 }
 @media (min-width: 992px) {
-  .productlayout button {
+  .productlayout .filtertype {
     margin-bottom: 0;
   }
 }

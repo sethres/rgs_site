@@ -2,9 +2,9 @@ import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.esm.browser.js
 
 let productFilter = Vue.component('ProductFilter', {
   template: `<div class="pb-5" v-if="items.length > 0">
-              <a :id="type">
+              <h6 :id="type" class="text-uppercase filtertype">
                 {{ this.type }}
-              </a>
+              </h6>
               <hr class="p-0 ml-0">
               <div :id="this.type">
                 <ul class="list-unstyled">
