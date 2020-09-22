@@ -14,7 +14,10 @@
 ## Docker Setup
 1. Build the docker image `docker-compose build`
 1. Run the docker image `docker-compose up` or `docker-compose up -d` to run in detached mode.
-1. The API is directly available locally here: http://localhost/api/
+The site is available at http://localhost.
+The API is directly available locally here: http://localhost/api/.
+The DB is created from /mysql/docker_config/rgs.sql. To update, overwrite that file. If the container has already been built, run `docker-compose up -d --build` to rebuild and update the DB.
+
 
 ## API Info
 The API is using slim framework 4.1 (http://www.slimframework.com/).

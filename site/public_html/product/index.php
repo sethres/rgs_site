@@ -10,6 +10,7 @@
   <?php
   $pgTitle = "Products: ".$skuvar;
   $pgDesc = "Browse the RGS Product Database";
+  $vuePage = true;
   include '../includes/meta.php';
   include '../includes/rollbar.php';
   ?>

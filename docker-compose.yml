@@ -5,6 +5,8 @@ services:
     build: 
       context: ./site
       dockerfile: Dockerfile.local
+    depends_on: 
+      - db
     env_file:
       - .env
       - .env.local
@@ -16,6 +18,14 @@ services:
       - ./site/api/composer.lock:/var/www/api/composer.lock
       - ./site/public_html:/var/www/html
       - ./logs:/var/log/apache2
-    expose:
-      - 80
-    network_mode: "host"
+    ports:
+      - "80:80"
+  db:
+    image: mysql
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile.local
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: zuc*TPOI4&n6VfLAbSI54p*0
+      MYSQL_DATABASE: rgsfurniture_dev

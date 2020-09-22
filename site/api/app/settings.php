@@ -16,10 +16,10 @@ return function (ContainerBuilder $containerBuilder) {
 
         if ($_SERVER['HTTP_HOST'] == 'localhost') {
             $dbSettings = [
-                'host' => '127.0.0.1',
+                'host' => 'db',
                 'dbname' => 'rgsfurniture_dev',
-                'user' => 'rgsfurnituredev_user',
-                'pass' => 'zuc$TPOI4&n6VfLAbSI54p$0'
+                'user' => 'root',
+                'pass' => 'zuc*TPOI4&n6VfLAbSI54p*0'
             ];
             $environment = 'development';
             $displayErrorDetails = true;

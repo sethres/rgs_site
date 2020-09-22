@@ -5,6 +5,7 @@
   <?php
   $pgTitle = "Products";
   $pgDesc = "Browse RGS Products";
+  $vuePage = true;
   include '../includes/meta.php';
   include '../includes/rollbar.php';
   ?>
