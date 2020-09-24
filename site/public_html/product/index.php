@@ -20,15 +20,15 @@
   <!-- NAV -->
   <?php include "../includes/nav.php"; ?>
   <!-- NAV -->
-  
+
   <!-- BODY CONTENT -->
   <main id="app"></main>
   <!-- BODY CONTENT -->
 
 
   <!-- FOOTER -->
-  <?php 
-    include "../includes/footer.php"; 
+  <?php
+    include "../includes/footer.php";
     include '../includes/vue.php';
   ?>
   <!-- FOOTER -->

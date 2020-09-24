@@ -19,15 +19,15 @@
             <span class="nav-link-text">Products</span>
           </a>
         </li>
-        <li <?php if ($pgTitle=="Spaces") echo " id=\"currentpage\""; ?> class="nav-item" data-toggle="tooltip" data-placement="bottom" title="Spaces">
-          <a class="nav-link" href="#">
+        <!-- <li <#?php if ($pgTitle=="Spaces") echo " id=\"currentpage\""; ?> class="nav-item" data-toggle="tooltip" data-placement="bottom" title="Spaces">
+          <a class="nav-link disabled" href="#">
             <i class="fas fa-paint-brush"></i>
             <span class="nav-link-text">Spaces</span>
           </a>
-        </li>
+        </li> -->
         <li <?php if ($pgTitle=="Catalogs") echo " id=\"currentpage\""; ?> class="nav-item" data-toggle="tooltip" data-placement="bottom" title="Catalogs">
           <a class="nav-link" href="#">
-            <i class="fas fa-download"></i>
+            <i class="fas fa-book"></i>
             <span class="nav-link-text">Catalogs</span>
           </a>
         </li>

@@ -26,7 +26,7 @@ let product = Vue.component('Product', {
                       <p class='pt-5' style='font-weight: 400; color: #6c757d;' v-if="configurations.length === 0">No Configurations Available</p>
                       <hr v-if="configurations.length === 0">
                       <p class="mt-5" v-if="configurations.length > 0">Configuration:</p>
-                      
+
                       <hr class="p-0 ml-0" v-if="configurations.length > 0">
                       <options :options="configurations" :disabled="disabledConfigs" :selected="configuration" @optionClicked="handleConfigClick" />
                     </div>
@@ -161,7 +161,7 @@ let product = Vue.component('Product', {
     },
 
     getProduct () {
-      let url = 'Product/' + encodeURIComponent(this.$route.params.prefix) + '?color=' + encodeURIComponent(this.color) + 
+      let url = 'Product/' + encodeURIComponent(this.$route.params.prefix) + '?color=' + encodeURIComponent(this.color) +
         '&config=' + encodeURIComponent(this.configuration);
       API.get(url, {
         errorMessage: 'Error getting product data',
@@ -172,7 +172,7 @@ let product = Vue.component('Product', {
             this.disabledColors = data.Disable.Colors;
             this.disabledConfigs = data.Disable.Configurations;
             this.initialized = true;
-            document.title = 'Products: ' + this.$route.params.prefix;
+            document.title = 'RGS | Products: ' + this.$route.params.prefix;
           }
         },
         error: () => {
@@ -184,17 +184,17 @@ let product = Vue.component('Product', {
     sameQuery (query1, query2) {
       const keys1 = Object.keys(query1);
       const keys2 = Object.keys(query2);
-    
+
       if (keys1.length !== keys2.length) {
         return false;
       }
-    
+
       for (let key of keys1) {
         if (query1[key] !== query2[key]) {
           return false;
         }
       }
-    
+
       return true;
     },
 

@@ -12,7 +12,7 @@ let productResults = Vue.component('ProductResults', {
                         </div>
                         <div class="card-body">
                         <h6 class="card-title mb-2" style="font-size: .9375rem; font-weight: 600;">{{ product.Name }}</h6>
-                        <a class="stretched-link" style="font-size: .75rem" :href="'/product/' + product.Prefix.toLowerCase() + '?color=' + encodeURIComponent(product.Color) + '&config=' + encodeURIComponent(product.Configuration)">View Product <i class="fa fa-angle-double-right"></i></a>
+                        <a class="stretched-link" style="font-size: .75rem" :href="'/product/' + product.Prefix + '?color=' + encodeURIComponent(product.Color) + '&config=' + encodeURIComponent(product.Configuration)">View Product <i class="fa fa-angle-double-right"></i></a>
                         </div>
                     </div>
                   </div>
