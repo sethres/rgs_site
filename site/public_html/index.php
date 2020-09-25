@@ -40,7 +40,7 @@
       $result = $conn->query($query);
       $even = 0;
       $n = 0;
-      while ($row = $result->fetch_assoc()) {
+      while ($row = $result->fetchAll()) {
         if ($even % 2 == 0) {
           ?>
           <div class="carousel-item h-100 <?php if($n==0) echo "active"?> bg-white">
