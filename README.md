@@ -3,16 +3,17 @@
 ## Running without docker
 1. The root of the site for Apache is /site/public_html.
 1. Copy the rewrite rules from site/docker_config/site.conf to your local apache config.
-1. Install composer (https://getcomposer.org/download/).
 1. Navigate to site/api in a terminal.
-1. Run `composer install`.
+1. Install composer (https://getcomposer.org/download/).
+1. Run `php composer.phar install`for a new install or `composer dump-autoload -o` for adding a controller.
 
 ## Setting up for production or adding controllers
 1. Navigate to site/api in a terminal.
-1. Run `composer install -o` for a new install or `composer dump-autoload -o` for adding a controller
+1. Install composer (https://getcomposer.org/download/).
+1. Run `php composer.phar install -o` for a new install or `composer dump-autoload -o` for adding a controller.
 
 ## Docker Setup
-1. Build the docker image `docker-compose build`
+1. Build the docker image `docker-compose build`.
 1. Run the docker image `docker-compose up` or `docker-compose up -d` to run in detached mode.
 The site is available at http://localhost.
 The API is directly available locally here: http://localhost/api/.
